@@ -1,0 +1,45 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: monospace;
+  color: #ccc;
+  background-color: #000;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  touch-action: none;
+  flex: 1;
+}
+
+.hint {
+  font-size: 6vw;
+}
+
+.hint.error {
+  color: #FF0033;
+}
+
+.toolbar {
+  display: flex;
+}
+
+.toolbar-left {
+  flex: 1;
+}
+
+.toggle-mode {
+  margin: 10px 20px;
+}
