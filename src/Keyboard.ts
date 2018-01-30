@@ -34,7 +34,7 @@ class Keyboard extends EventEmitter {
   getKey(e) {
     let key = Keys[e.keyCode];
     if (!key) key = e.key;
-    return key;
+    return key.toLowerCase();
   }
 
   getKeyCode(e) {

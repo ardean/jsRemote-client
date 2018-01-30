@@ -97,10 +97,16 @@ class Screen extends EventEmitter {
 
     this.keyboard
       .on("down", (key, keyCode) => {
-        this.connection.send("keyboardDown", key, keyCode);
+        if (this.pointerLock.isLocked) {
+          if (key === "escape") return PointerLock.exitPointerLock();
+          this.connection.send("keyboardDown", key, keyCode);
+        }
       })
       .on("up", (key, keyCode) => {
-        this.connection.send("keyboardUp", key, keyCode);
+        if (this.pointerLock.isLocked) {
+          if (key === "escape") return PointerLock.exitPointerLock();
+          this.connection.send("keyboardUp", key, keyCode);
+        }
       });
 
     this.pointerLock
