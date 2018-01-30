@@ -1,6 +1,6 @@
 {
   "name": "jsremote-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "jsRemote Client",
   "repository": "https://github.com/ardean/jsRemote-client",
   "bugs": "https://github.com/ardean/jsRemote-client/issues",
@@ -40,8 +40,8 @@
   "devDependencies": {
     "@types/events": "^1.1.0",
     "@types/jquery": "^3.3.0",
-    "@types/socket.io-client": "^1.4.32",
     "@types/node": "^9.3.0",
+    "@types/socket.io-client": "^1.4.32",
     "clean-webpack-plugin": "^0.1.17",
     "ts-loader": "^3.3.1",
     "typescript": "^2.6.2",
