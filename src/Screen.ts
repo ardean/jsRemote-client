@@ -45,6 +45,10 @@ class Screen extends EventEmitter {
         const mode = this.previousMode === "Offline" ? this.detectMode() : this.previousMode;
         this.changeMode(mode);
       })
+      .on("error", err => {
+        this.emit("connectionError", err);
+        this.emit("error", err);
+      })
       .on("disconnect", () => {
         this.changeMode("Offline");
       });

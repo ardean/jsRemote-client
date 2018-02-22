@@ -20,6 +20,7 @@ const screen = new Screen(document.querySelector(".screen"), {
     } else {
       modeSwitchElement.textContent = "Offline";
     }
-  });
+  })
+  .on("connectionError", err => console.error(err));
 
 modeSwitchElement.addEventListener("click", () => screen.toggleMode());

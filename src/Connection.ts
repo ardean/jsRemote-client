@@ -20,6 +20,9 @@ class Connection extends EventEmitter implements IConnection {
         this.connected = true;
         this.emit("ready");
       })
+      .on("connect_error", err => {
+        this.emit("error", err);
+      })
       .on("disconnect", () => {
         this.first = false;
         this.connected = false;
