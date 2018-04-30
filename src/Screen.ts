@@ -119,7 +119,7 @@ class Screen extends EventEmitter {
       });
   }
 
-  async connect(url: string) {
+  async connect(url?: string) {
     await this.connection.connect(url);
   }
 
