@@ -2,24 +2,24 @@ import Mouse from "./Mouse";
 import Keyboard from "./Keyboard";
 import PointerLock from "jspointerlock";
 import PointerEvents from "./PointerEvents";
-import Connection, { DebugConnection, IConnection } from "./Connection";
+import Connection, { DebugConnection, ProductionConnection } from "./Connection";
 import { EventEmitter } from "events";
 
 class Screen extends EventEmitter {
   debug: boolean;
 
   mode: string = "Offline";
+  status: string;
   previousMode: string = "Offline";
   mouse: Mouse;
   pointerLock: any;
   keyboard: Keyboard;
-  connection: IConnection;
+  connection: Connection;
   pointerEvents: PointerEvents;
 
   constructor(
     private element: Element,
     options: {
-      url?: string,
       debug?: boolean
     } = {}
   ) {
@@ -31,7 +31,7 @@ class Screen extends EventEmitter {
     this.pointerEvents = new PointerEvents(this.element);
     this.mouse = new Mouse(this.element);
     this.keyboard = new Keyboard(this.element);
-    this.connection = this.debug ? new DebugConnection() : new Connection(options.url);
+    this.connection = this.debug ? new DebugConnection() : new ProductionConnection();
 
     this.element
       .addEventListener("click", () => {
@@ -119,22 +119,26 @@ class Screen extends EventEmitter {
       });
   }
 
+  async connect(url: string) {
+    await this.connection.connect(url);
+  }
+
   updateText() {
     if (!this.connection.connected && !this.connection.first) return this.emit("messageChange", "Not connected to server!", true);
 
     if (this.mode === "Touch") {
       if (this.pointerEvents.action === "scroll" && this.pointerEvents.scrollDirection) {
-        this.emit("messageChange", `Scrolling ${this.pointerEvents.scrollDirection}...`);
+        this.changeStatus(this.pointerEvents.scrollDirection === "up" ? "ScrollUp" : "ScrollDown");
       } else if (this.pointerEvents.action === "move") {
-        this.emit("messageChange", "Moving...");
+        this.changeStatus("Move");
       } else {
-        this.emit("messageChange", "Tap & Pan to control");
+        this.changeStatus("Idle");
       }
     } else {
       if (this.pointerLock.isLocked) {
-        this.emit("messageChange", "You're controlling now");
+        this.changeStatus("Control");
       } else {
-        this.emit("messageChange", "Click to control");
+        this.changeStatus("Idle");
       }
     }
   }
@@ -167,6 +171,11 @@ class Screen extends EventEmitter {
     this.mode = mode;
     this.updateText();
     this.emit("modeChange", this.mode);
+  }
+
+  changeStatus(status: string) {
+    this.status = status;
+    this.emit("statusChange", status);
   }
 
   detectMode() {

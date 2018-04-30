@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import Gestures from "./Gestures";
 
-class PointerEvents extends EventEmitter {
+export default class PointerEvents extends EventEmitter {
   gestures: Gestures;
   action: string;
   scrollDirection: string;
@@ -76,6 +76,3 @@ class PointerEvents extends EventEmitter {
     this.emit("press");
   }
 }
-
-export default PointerEvents;
-export { PointerEvents };

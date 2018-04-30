@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 
-class Gestures extends EventEmitter {
+export default class Gestures extends EventEmitter {
   downDate: Date;
   firstPageX: number;
   firstPageY: number;
@@ -64,7 +64,7 @@ class Gestures extends EventEmitter {
     e.stopPropagation();
 
     if (this.pointerDown) {
-      if (!this.underMovementThreshold(e.pageX, e.pageX)) {
+      if (!this.underMovementThreshold(e.pageX, e.pageY)) {
         this.moved = true;
       }
 
@@ -109,7 +109,11 @@ class Gestures extends EventEmitter {
     if (this.firstPointer(e)) {
       if (this.scrolling) {
         this.emit("scrollend");
-      } else if (!this.moved && !this.moreThanOneDown && (new Date().valueOf() - this.downDate.valueOf()) <= 300) {
+      } else if (
+        !this.moved &&
+        !this.moreThanOneDown &&
+        (new Date().valueOf() - this.downDate.valueOf()) <= 300
+      ) {
         this.emit("tap");
       } else {
         this.emit("up");
@@ -147,6 +151,3 @@ class Gestures extends EventEmitter {
     window.clearTimeout(this.pressTimeout);
   }
 }
-
-export default Gestures;
-export { Gestures };

@@ -1,33 +1,33 @@
 import { EventEmitter } from "events";
 import * as io from "socket.io-client";
 
-class Connection extends EventEmitter implements IConnection {
+class ProductionConnection extends EventEmitter implements Connection {
   first: boolean = true;
   connected: boolean = false;
   socket: SocketIOClient.Socket;
 
-  constructor(
-    url: string = location.host
-  ) {
-    super();
-
+  async connect(url: string = location.host) {
     this.socket = io(url, {
       path: "/sockets"
     });
 
-    this.socket
-      .on("connect", () => {
-        this.connected = true;
-        this.emit("ready");
-      })
-      .on("connect_error", err => {
-        this.emit("error", err);
-      })
-      .on("disconnect", () => {
-        this.first = false;
-        this.connected = false;
-        this.emit("disconnect");
-      });
+    return new Promise<void>((resolve, reject) => {
+      this.socket
+        .on("connect", () => {
+          this.connected = true;
+          this.emit("ready");
+          resolve();
+        })
+        .on("connect_error", err => {
+          this.emit("error", err);
+          reject(err);
+        })
+        .on("disconnect", () => {
+          this.first = false;
+          this.connected = false;
+          this.emit("disconnect");
+        });
+    });
   }
 
   send(eventName: string, ...args: any[]) {
@@ -35,15 +35,9 @@ class Connection extends EventEmitter implements IConnection {
   }
 }
 
-class DebugConnection extends EventEmitter implements IConnection {
+class DebugConnection extends EventEmitter implements Connection {
   first: boolean = true;
   connected: boolean = false;
-
-  constructor() {
-    super();
-
-    setTimeout(() => this.setConnected(), 1 * 1000);
-  }
 
   setConnected() {
     this.connected = true;
@@ -62,21 +56,26 @@ class DebugConnection extends EventEmitter implements IConnection {
     }, 1 * 1000);
   }
 
+  async connect(url: string) {
+    setTimeout(() => this.setConnected(), 1 * 1000);
+  }
+
   send(eventName: string, ...args: any[]) {
     console.debug("sending", eventName, ...args);
   }
 }
 
-interface IConnection extends EventEmitter {
+interface Connection extends EventEmitter {
   first: boolean;
   connected: boolean;
 
+  connect(url: string): Promise<void>;
   send(eventName: string, ...args: any[]);
 }
 
 export default Connection;
 export {
-  Connection,
+  ProductionConnection,
   DebugConnection,
-  IConnection
-};
+  Connection
+}
